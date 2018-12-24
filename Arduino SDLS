@@ -1,0 +1,67 @@
+#include <Wire.h>
+#include "LCD.h" // For LCD
+#include "LiquidCrystal_I2C.h"
+#include <Servo.h>
+
+Servo lock_servo;  // create servo object to control a servo
+LiquidCrystal_I2C lcd(0x3F, 2, 1, 0, 4, 5, 6, 7);// initialise library with numbers of interface pins
+
+String incomingByte;
+
+void setup() {
+  Serial.begin(9600);
+  lock_servo.attach(3);
+  pinMode(2, OUTPUT);
+  digitalWrite(2, HIGH);
+  Serial.setTimeout(30);
+  lcd.begin (16, 2);
+  lcd.setBacklightPin(3, POSITIVE); // BL, BL_POL
+  lcd.setBacklight(HIGH);
+}
+
+
+
+void loop() {
+
+  // send data only when you receive data:
+  if (Serial.available() > 0) {
+
+    incomingByte = Serial.readString(); // byte from the button change back to strings
+    Serial.println(incomingByte);
+
+    if (incomingByte == "servo90")
+  {
+    lock_servo.write(90);
+  }
+
+  if (incomingByte == "servo0")
+  {
+    lock_servo.write(0);
+  }
+
+  if (incomingByte == "available")
+  {
+    lcd.clear();
+    lcd.setCursor(3, 0);
+    lcd.print("AVAILABLE");
+  }
+
+  if (incomingByte == "come in")
+  {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("PLEASE, COME IN");
+  }
+
+     if (incomingByte == "not available")
+  {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("NOT AVAILABLE");
+    
+  }
+  }
+
+ 
+
+}
